@@ -5,19 +5,13 @@ June 24th, 2015
 
 The following is the ADT design of class hierarchy for a Matrix
 class.
-
 Includes classes:
 Matrix
 NumMatrix
-MixedMatrix
 WorldMatrix
 OneDMatrix
 SquareMatrix
 SymmetricMatrix.
-
-I am still debating should I include a IdentityMatrix, since it can be
-inited then modified after I don't want to constrain it only as a
-IdentityMatrix.
 
 It also include 4 exceptions that will be raised, detail of when these
 will be raised ais include later:
@@ -26,28 +20,29 @@ NonWordError
 IndexOutOfBoundError
 IncorrectDimensionError
 
+
 For now all of the Matrix (and children) will be inited to certain
-dimension but with 0 for NumMatrix or MixedMatrix, "" for
+dimension but with 0 for NumMatrix or Matrix, "" for
 WordMatrix. Then you can set any value you want.
 
 If you want to create a square matrix, use the identity method for
 SquareMatrix. There is no separate class for identity matrix since you
 might want to use it as a normal matrix afterwords.  
 
+
+I am still debating should I include a IdentityMatrix, since it can be
+inited then modified after I don't want to constrain it only as a
+IdentityMatrix.
 """
 
 
 class Matrix(object):
     """ This is the Matrix class
-    It is the general matrix. It is not meant to use, rather it is
-    just the parent of all other Matrix. 
+    It is the general matrix or the mixed matrix.  
     
-    **If you want a matrix for mixed values use the MixedMatrix
-
     Children classes:
     NumMatrix
     WordMatrix
-    MixedMatrix
     OneDMatrix
     """
     def __init__(self, rows, columns):
@@ -281,6 +276,32 @@ class NumMatrix(Matrix):
         If not the same dimension raise IncorrectDimesionError
         If matrix is not all numbers raise NonNumError
         """
+
+        
+class OneDMatrix(NumMatrix):
+    """ This is the OneDMatrix class"""
+    def __init__(self, length):
+        """(int) -> NoType
+
+        Override the Matrix __init__
+        Asking for only the length, assuming it is a row matrix
+        It might be a problem if the user try to use OneDMatrix with
+        Matrix multiplication 
+        """
+
+    def set(self, index, value):
+        """(int, float) -> NoType
+
+        Overrideing NumMatrix set
+        Set the value in the 1D matrix
+        """
+        
+    def get(self, index):
+        """(int) -> float
+
+        Overriding NumMatrix get
+        Return the value of the 1D matrix
+        """
            
 class SquareMatrix(NumMatrix):
     """ This is the SquareMatrix class"""
@@ -292,41 +313,78 @@ class SquareMatrix(NumMatrix):
         Init with zeros
         """
         
-    def get_diag(self, *values):
+    def get_diag(self):
+        """(NoType) -> list
+
+        Return a list of values from the diagonal (forward only)
+        """
 
     def set_diag(self, *values):
+        """(...) -> Notype
 
+        Set a list of floats as the diagonal (forward only)
+        If worng length raise IncorrectDimensionError
+        """
+        
     def ident(self, value=1):
-
+        """(int) -> NoType
+        
+        Make the matrix as a identity matrix with given values
+        if not given it is assume to be 1
+        """
+        
     def det(self):
-
+        """(NoType) -> int
+        
+        Return the determinant of a 2x2 matrix
+        If not a 2x2 matrix raise IncorrectDimensionError
+        """
+        
 class SymmetricMatrix(SquareMatrix):
     """ This is the SymmetricMatrix class"""
-    def set():
-
-    def set_c():
-
-    def set_r():
-
+    def set(self, row, column, value):
+        """(int, int, float) -> NoType
+        
+        Override the NumMatrix set. Will change both the given index
+        and the minor of the matrix
+        """
+        
+    def set_c(self, column, *values):
+        """(int, ...) -> NoType
+        
+        Overide the NumMatrix set_c. Will change both the given column
+        and the minor column
+        """
+        
+    def set_r(self, row, *values):
+        """(int, ...) -> NoType
+        
+        Overide the NumMatrix set_r. Will change both the given row
+        and the minor row
+        """
+        
     
 class WordMatrix(Matrix):
     """ This is the WordMatrix class"""
+    def __str__
+
+    
     def __add__(self, matrix):
+        """(WordMatrix) -> WordMatrix
+        
+        Return a new WorldMatrix with self + matrix using operator (+)
+        """
         
     def add(self, matrix):
+        """(WordMatric) -> WordMatrix
+        
+        Add the word from matrix to self
+        Also return self
+        """
+        
+# Exception, I almost want to keep it in a different file
 
         
-class MixedMatrix(Matrix):
-    """ This is the MixedMatrix class"""
-    def __str__(self):
-       
-
-class OneDMatrix(Matrix):
-    """ This is the OneDMatrix class"""
-    def __init__(self, length):
-
-
-# Exception, I almost want to keep it in a different file
 class NonNumError(Exception):
     """ This is the NonNumError exception"""
 
