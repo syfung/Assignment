@@ -189,20 +189,82 @@ def regex_match(root, match_string):
     """(RegexTree, str) -> bool
 
     Return true if the string match the regex contained in the tree
-    rooted r
+    rooted r.
+    
+    We assume that the tree rooted in r respect the tree hierarchy,
+    like like internal nodes. Shouh as StarTree, DotTree, BarTree and
+    Leaf.
+
+    It is hard to decide should the function raise a exception if the
+    string contain a invalid char, since trying to match a string
+    sugess the user don't know how a regex work. But at the same time
+    users might use it in function that might generate string that
+    have invalid char, but only want the function return false rater
+    than rasing an exception.
+
+    The decision is it will not raise an exception
 
     >>> regex_match(r, "22222")
     True
     >>> regex_mathc(r, "0222")
     False
     >>> regrex_match(r, "ha")
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "./regex_functions.py", line 65, in all_regex_permutations
-      raise InvalidCharError("Contains invalid regex character")
-    regex_functions.InvalidRegexError: Not a Regex
+    False
     """
+    if(type(root) is Leaf):
+        if(len(match_string) == 0 and root.get_symbol() == "e"):
+            return True
+        
+        elif(len(match_string) == 1 and match_string[0] == root.get_symbol()):
+            return True
+        else:
+            return False
 
+    elif(type(root) is StarTree):
+        if(match_string == ""):
+            return True
+        
+        else:
+            num_char = len(match_string)
+            for i in range(1, num_char + 1):
+                if(num_char % i == 0):
+                    unit_string = match_string[0:i]
+                    num_unit = num_char // i
+                    # When the unit len == string len it will always
+                    # equal, passing the original match_string into
+                    # the regex_match with the child()
+                    if((unit_string * num_unit) == match_string):
+                        return regex_match(root.get_child(), unit_string)
+                    else:
+                        pass
+        
+    elif(type(root) is DotTree):
+        root_1 = root.get_left_child()
+        root_2 = root.get_right_child()
+
+        # I can't think of a better way to do it, let just spliting
+        # all possible until it find a working combination or try
+        # everything
+        for i in range(0, len(match_string) + 1):
+            string_1 = match_string[:i]
+            string_2 = match_string[i:]
+            print(string_1, string_2)
+            if(regex_match(root_1, string_1) and
+               regex_match(root_2, string_2)):
+                return True
+
+        return False
+        
+    elif(type(root) is BarTree):
+        root_1 = root.get_left_child()
+        root_2 = root.get_right_child()
+
+        return (regex_match(root_1, match_string) or
+                regex_match(root_2, match_string))
+
+    else:
+        return False
+            
     
 def build_regex_tree(regex):
     """(str) -> RegexTree
